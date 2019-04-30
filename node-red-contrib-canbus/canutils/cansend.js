@@ -84,13 +84,13 @@ module.exports = function(RED) {
 			{
 				frame.canid=random.integer(1,4095);
 			}
-			node.warn("canid:"+frame.canid+",data:"+frame.data+",dlc:"+frame.dlc);
-			if(frame.dlc<=8)	//try-catch?
-				channel.send({ id: frame.canid,
-					ext: false,
-					data:frame.data });
-			else
-				node.warn("frame data is too long");
+                        node.warn("canid:"+frame.canid+",data:"+frame.data+",dlc:"+frame.dlc+",ext:"+((frame.canid & 0x1ffff800) != 0));
+                        if(frame.dlc<=8)        //try-catch?
+                                channel.send({ id: frame.canid,
+                                        ext: ((frame.canid & 0x1ffff800) != 0),
+                                        data:frame.data });
+                        else
+                                node.warn("frame data is too long");
 		});
 		//TODO:support for extended frames, other cansend options
 	        this.on("close", function() {
